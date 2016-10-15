@@ -7,6 +7,7 @@ public class Neuron {
 	protected float output;
 	protected float input;
 	public String name;
+	private float delta;
 	protected List<Connection> outgoingConnections = new ArrayList<>();
 	protected List<Connection> incomingConnections = new ArrayList<>();
 	
@@ -45,6 +46,14 @@ public class Neuron {
 	
 	public void addIncomingConnection(Connection connection){
 		incomingConnections.add(connection);
+	}
+	
+	public void setDelta(float delta){
+		this.delta = delta;
+	}
+	
+	public float getDelta(){
+		return delta;
 	}
 	
 	public float getOutput() {

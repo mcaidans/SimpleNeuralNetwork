@@ -14,19 +14,42 @@ public class test_harness {
 		Network neuralNet = new Network(ils,hls,ols);
 		neuralNet.setInput(image1);
 		//neuralNet.printInput();
-		
+		neuralNet.printNeurons();
 
 		
 
 		
 		
 		neuralNet.forwadPropagate();
-	
 		System.out.println();
-		System.out.println("Output:");
+		//neuralNet.printNeurons();
+		System.out.println();
+		System.out.println("Output 1:");
 		float[] outputData = neuralNet.getOutputData();
 		for (int i = 0;i < outputData.length; i++){
 			System.out.print(outputData[i] + " ");
+		}
+		System.out.println();
+		neuralNet.backPropagate(1);
+		neuralNet.forwadPropagate();
+		System.out.println();
+		System.out.println("Output 2:");
+		
+		System.out.println();
+		//neuralNet.printNeurons();
+		neuralNet.backPropagate(1);
+		neuralNet.forwadPropagate();
+		neuralNet.backPropagate(1);
+		neuralNet.forwadPropagate();
+		neuralNet.backPropagate(1);
+		neuralNet.forwadPropagate();
+		neuralNet.backPropagate(1);
+		neuralNet.forwadPropagate();
+		neuralNet.backPropagate(1);
+		neuralNet.forwadPropagate();
+		float[] outputDat = neuralNet.getOutputData();
+		for (int i = 0;i < outputData.length; i++){
+			System.out.print(outputDat[i] + " ");
 		}
 	}
 	

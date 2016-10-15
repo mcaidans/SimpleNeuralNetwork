@@ -7,7 +7,8 @@ public class Network {
 	protected static List<Neuron> inputLayer = new ArrayList<>();
 	protected List<Neuron> hiddenLayer1 = new ArrayList<>();
 	protected List<Neuron> outputLayer = new ArrayList<>();
-	public float learningRate = (float)0.12;
+	public float learningRate = (float)1.5;
+	private boolean goalState = false;
 	
 	private int inputLayerSize;
 	private int hiddenLayerSize;
@@ -36,6 +37,24 @@ public class Network {
 			inputLayer.add(neuron);
 		}
 		createConnections();
+	}
+	
+	public void printNeurons(){
+		System.out.print("Input Layer: ");
+		for ( int i = 0; i < inputLayerSize; i++){
+			System.out.print(inputLayer.get(i).getOutput());
+		}
+		System.out.println();
+		System.out.print("Hidden Layer: ");
+		for ( int i = 0; i < hiddenLayerSize; i++){
+			System.out.print(hiddenLayer1.get(i).getOutput());
+		}
+		System.out.println();
+		System.out.print("Output Layer: ");
+		for ( int i = 0; i < outputLayerSize; i++){
+			System.out.print(outputLayer.get(i).getOutput());
+		}
+		
 	}
 	
 	public void createConnections(){
@@ -85,10 +104,7 @@ public class Network {
 			float sum = 0;
 			for(int j = 0; j < hiddenLayer1.get(i).incomingConnections.size(); j++){
 				sum += (hiddenLayer1.get(i).incomingConnections.get(j).getFrom().getOutput() * hiddenLayer1.get(i).incomingConnections.get(j).getWeight());
-				//System.out.print(hiddenLayer1.get(i).incomingConnections.get(j).getFrom().getOutput() + " ");
-				//System.out.print(" I:"+  i + " J:" + j);
 			}
-			System.out.print(sum);
 			hiddenLayer1.get(i).setInput(sum);
 		}
 		
@@ -107,60 +123,75 @@ public class Network {
 		float weight = connection.getWeight();
 		float output = b.getDelta()*weight;
 		return output;
-	}
+	}*/
 	
 	
 	//Calculates the sum of all (weights*delta) of connections from a given neuron.
 	public float getSumOfDeltaWeights(Neuron a){
 		float sum = 0;														//Initialize sum
-		for (int i = 0; i < a.getConnections().size(); i++){				
-			sum += (a.connections[i].weight	* a.delta);						//Add to total sum
+		for (int i = 0; i < a.outgoingConnections.size(); i++){				
+			sum += (a.outgoingConnections.get(i).getWeight() * a.outgoingConnections.get(i).getTo().getDelta());
+			//System.out.println(i + " Delta: " + a.outgoingConnections.get(i).getTo().getDelta());
+			//System.out.println(i + " Weighted:" + a.outgoingConnections.get(i).getWeight());
 		}
 		return sum;
 	}
 	
 	//Calculates the delta of an output neuron
-	public float calculateOutputDelta(OutputNeuron neuron, float desiredOutput){
-		float nout = neuron.output;											//Get output of Neuron
+	public float calculateOutputDelta(Neuron neuron, float desiredOutput){
+		float nout = neuron.getOutput();											//Get output of Neuron
 		float delta = nout*(1-nout)*(desiredOutput-nout);					//Calculate Delta
 		return delta;
 	}
 	
 	//Calculates the Delta of a hidden neuron
-	public float calculateHiddenDelta(Neuron neuron, float desiredOutput){
-		float nout = neuron.output;											//Get output of Neuron
+	public float calculateHiddenDelta(Neuron neuron){
+		float nout = neuron.getOutput();											//Get output of Neuron
 		float delta = nout*(1-nout)*getSumOfDeltaWeights(neuron);			//Calculate Delta
 		return delta;
 	}
 	
 	//Calculates and assigns the new weight
-	public void calculateWeight(Connection connection){					
+	public float calculateWeight(Connection connection){					
 		float oldWeight = connection.getWeight();							//Get old weight
 		float neuronOutput = connection.getFrom().getOutput();				//Get output of Neuron
-		float delta = connection.getTo().getDelta();						//Get delta of Neuron
+		//System.out.print("Output: "+ neuronOutput);
+		float delta = connection.getTo().getDelta();
+		//System.out.print(" Delta: "+ delta);
 		float weight = oldWeight + learningRate * neuronOutput * delta;		//Get New Weight
-		connection.setWeight(weight);										//Assign New Weight
+		//System.out.println(" Old Weight: "+ oldWeight + " New Weight: " + weight);
+		
+		return weight;										//Assign New Weight
 	}
 	
-	public void backPropagate(){
+	public void backPropagate(int position){
 		//initial feed of inputs
-		Boolean goalState = false;
 		while(!goalState){
-			for(int i = 0; i < outputLayer.size();i++){					//For all output neurons
-				calculateOutputDelta(outputLayer.get(i), 1);			//Calculate Delta of Output Neuron
-				for(int j = 0; j < connectionsTo.size();i++){			//For all connections to output neuron
-					calculateWeight(connectionsTo[j]);					//Calculate new weight
+			for(int i = 0; i < outputLayer.size();i++){											//For all output neurons
+				if (i == position){
+					outputLayer.get(i).setDelta(calculateOutputDelta(outputLayer.get(i), 1));								//Calculate Delta of Output Neuron using desired = 1
 				}
+				else{
+					outputLayer.get(i).setDelta(calculateOutputDelta(outputLayer.get(i), 0));									//Calculate Delta of Output Neuron using desired= 0
+					}
+				for(int j = 0; j < outputLayer.get(i).incomingConnections.size(); j++){			//For all connections to output neuron
+					calculateWeight(outputLayer.get(i).incomingConnections.get(j));					//Calculate new weight
+					
+				}
+				System.out.println("Output Delta: " + i + ": " + outputLayer.get(i).getDelta());
 			}
+			System.out.println();
 			
 			for (int i = 0; i < hiddenLayer1.size(); i++){				//For all hidden neurons
-				calculateHiddenDelta();									//Calculate Delta of Hidden Neuron
-				for(int j = 0; j < connectionsTo.size(); i++){				//For all connections to hidden neuron
-					calculateWeight(connectionsTo[j]);						//Calculate new weight
+				hiddenLayer1.get(i).setDelta(calculateHiddenDelta(hiddenLayer1.get(i)));									//Calculate Delta of Hidden Neuron
+				for(int j = 0; j < hiddenLayer1.get(i).incomingConnections.size(); j++){				//For all connections to hidden neuron
+					hiddenLayer1.get(i).incomingConnections.get(j).setWeight(calculateWeight(hiddenLayer1.get(i).incomingConnections.get(j)));						//Calculate new weight
 				}
 			}
+			goalState = true;
 		}
 		
 	
-	}*/
+	}
 }
+
