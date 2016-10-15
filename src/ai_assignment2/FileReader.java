@@ -11,8 +11,8 @@ public class FileReader {
 	}
 	
 	//STEP 1: USE THIS TO CONVERT PICTURE INTO ARRAY
-		public static char[][] getPicture(){
-			  File dictionary = new File("Pattern Files/Clock.txt");
+		public static char[][] getPicture(String filename){
+			  File dictionary = new File(filename);
 			  char[][] picture = new char[12][12];
 			  String line ="";
 			  try {
@@ -33,8 +33,8 @@ public class FileReader {
 			}
 		
 	//CONTROLLER
-	public static float[] makeDataSet(){
-		char[][] picture = getPicture();
+	public static float[] makeDataSet(String filename){
+		char[][] picture = getPicture(filename);
 		float[] dataset = convertPictureToFloat(picture);
 		return dataset;
 	}
