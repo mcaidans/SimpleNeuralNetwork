@@ -7,7 +7,7 @@ public class Network {
 	protected static List<Neuron> inputLayer = new ArrayList<>();
 	protected List<Neuron> hiddenLayer1 = new ArrayList<>();
 	protected List<Neuron> outputLayer = new ArrayList<>();
-	public float learningRate = (float)1.5;
+	public float learningRate = (float).1;
 	private boolean goalState = false;
 	
 	private int inputLayerSize;
@@ -99,7 +99,7 @@ public class Network {
 		}
 	}
 	
-	public void forwadPropagate(){
+	public void forwardPropagate(){
 		for(int i = 0; i < hiddenLayer1.size(); i++){
 			float sum = 0;
 			for(int j = 0; j < hiddenLayer1.get(i).incomingConnections.size(); j++){
@@ -131,8 +131,6 @@ public class Network {
 		float sum = 0;														//Initialize sum
 		for (int i = 0; i < a.outgoingConnections.size(); i++){				
 			sum += (a.outgoingConnections.get(i).getWeight() * a.outgoingConnections.get(i).getTo().getDelta());
-			//System.out.println(i + " Delta: " + a.outgoingConnections.get(i).getTo().getDelta());
-			//System.out.println(i + " Weighted:" + a.outgoingConnections.get(i).getWeight());
 		}
 		return sum;
 	}
@@ -140,7 +138,10 @@ public class Network {
 	//Calculates the delta of an output neuron
 	public float calculateOutputDelta(Neuron neuron, float desiredOutput){
 		float nout = neuron.getOutput();											//Get output of Neuron
-		float delta = nout*(1-nout)*(desiredOutput-nout);					//Calculate Delta
+		float delta = nout*(1-nout)*(desiredOutput-nout);
+		//System.out.print("Desired Output: " + desiredOutput);
+		//System.out.print(" Actual: " + nout);
+		//System.out.println(" Delta: " + delta);
 		return delta;
 	}
 	
@@ -155,40 +156,41 @@ public class Network {
 	public float calculateWeight(Connection connection){					
 		float oldWeight = connection.getWeight();							//Get old weight
 		float neuronOutput = connection.getFrom().getOutput();				//Get output of Neuron
-		//System.out.print("Output: "+ neuronOutput);
 		float delta = connection.getTo().getDelta();
-		//System.out.print(" Delta: "+ delta);
 		float weight = oldWeight + learningRate * neuronOutput * delta;		//Get New Weight
-		//System.out.println(" Old Weight: "+ oldWeight + " New Weight: " + weight);
-		
+	
+		connection.setWeight(weight);
 		return weight;										//Assign New Weight
 	}
 	
 	public void backPropagate(int position){
-		//initial feed of inputs
+		int count = 0;
 		while(!goalState){
 			for(int i = 0; i < outputLayer.size();i++){											//For all output neurons
 				if (i == position){
-					outputLayer.get(i).setDelta(calculateOutputDelta(outputLayer.get(i), 1));								//Calculate Delta of Output Neuron using desired = 1
+					outputLayer.get(i).setDelta(calculateOutputDelta(outputLayer.get(i), (float)1.0));								//Calculate Delta of Output Neuron using desired = 1
 				}
 				else{
-					outputLayer.get(i).setDelta(calculateOutputDelta(outputLayer.get(i), 0));									//Calculate Delta of Output Neuron using desired= 0
+					outputLayer.get(i).setDelta(calculateOutputDelta(outputLayer.get(i), (float)0.0));									//Calculate Delta of Output Neuron using desired= 0
 					}
 				for(int j = 0; j < outputLayer.get(i).incomingConnections.size(); j++){			//For all connections to output neuron
 					calculateWeight(outputLayer.get(i).incomingConnections.get(j));					//Calculate new weight
 					
 				}
-				System.out.println("Output Delta: " + i + ": " + outputLayer.get(i).getDelta());
 			}
-			System.out.println();
+			//System.out.println();
 			
 			for (int i = 0; i < hiddenLayer1.size(); i++){				//For all hidden neurons
 				hiddenLayer1.get(i).setDelta(calculateHiddenDelta(hiddenLayer1.get(i)));									//Calculate Delta of Hidden Neuron
 				for(int j = 0; j < hiddenLayer1.get(i).incomingConnections.size(); j++){				//For all connections to hidden neuron
-					hiddenLayer1.get(i).incomingConnections.get(j).setWeight(calculateWeight(hiddenLayer1.get(i).incomingConnections.get(j)));						//Calculate new weight
+					calculateWeight(hiddenLayer1.get(i).incomingConnections.get(j));						//Calculate new weight
 				}
 			}
-			goalState = true;
+			forwardPropagate();
+			count++;
+			if(count == 1600){
+				goalState = true;
+			}
 		}
 		
 	
