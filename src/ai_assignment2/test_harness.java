@@ -4,9 +4,58 @@ public class test_harness {
 
 	public static void main(String[] args) {
 
+		List<char[][]> trainingPatterns = FileReader.makeTrainingPatterns();
+		List<char[][]> test5Patterns = FileReader.makeTest5Patterns();
+		List<char[][]> test10Patterns = FileReader.makeTest10Patterns();		
+		List<float[]> trainingDataSet = FileReader.makeDataSet_all(trainingPatterns);
+		List<float[]> test5DataSet = FileReader.makeDataSet_all(test5Patterns);
+		List<float[]> test10DataSet = FileReader.makeDataSet_all(test10Patterns);
+	
+		float[] trainingImage1 = trainingDataSet.get(0);
+		float[] testingImage1 = test10DataSet.get(0);
 		
+		int ils = 12*12; // input layer size
+		int hls = 5; // hidden layer size
+		int ols = 12; // output layer size
+		Network neuralNet = new Network(ils,hls,ols);
+		neuralNet.setInput(trainingImage1);
+		neuralNet.forwardPropagate();
+		System.out.println("Output after forward propagate:");
+		float[] outputData = neuralNet.getOutputData();
+		for (int i = 0;i < outputData.length; i++){
+			System.out.print(outputData[i] + " ");
+		}
+		System.out.println();
+		
+		neuralNet.backPropagate(0);
+		System.out.println();
+		System.out.println("Output after backpropagting method:");
+		float[] outputDat = neuralNet.getOutputData();
+		for (int i = 0;i < outputDat.length; i++){
+			System.out.print(outputDat[i] + " ");
+		}
+		System.out.println();
+		
+		neuralNet.setInput(testingImage1);
+		neuralNet.forwardPropagate();
+		System.out.println();
+		System.out.println("out put after forward propagating at 10 Noise:");
+		outputData = neuralNet.getOutputData();
+		for (int i = 0;i < outputData.length; i++){
+			System.out.print(outputData[i] + " ");
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+				
+		/*
 		float[] image1 = FileReader.makeDataSet("Pattern Files/Clock.txt");
-		float[] image2 = FileReader.makeDataSet("Pattern Files/Clock.noise.txt");
+		float[] image2 = FileReader.makeDataSet("Test Files 10/Clock.noise.txt");
 		
 		int ils = 12*12; // input layer size
 		int hls = 5; // hidden layer size
@@ -52,12 +101,14 @@ public class test_harness {
 		for (int i = 0;i < outputData.length; i++){
 			System.out.print(outputData[i] + " ");
 		}
-		System.out.println();
-		neuralNet.forwardPropagate();
-		outputData = neuralNet.getOutputData();
-		for (int i = 0;i < outputData.length; i++){
-			System.out.print(outputData[i] + " ");
-		}
+		//System.out.println();
+		//neuralNet.forwardPropagate();
+		//outputData = neuralNet.getOutputData();
+		//for (int i = 0;i < outputData.length; i++){
+		//	System.out.print(outputData[i] + " ");
+		//} */
+		
+		
 	}
 	
 }

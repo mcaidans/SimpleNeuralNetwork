@@ -39,6 +39,7 @@ public class FileReader {
 		return dataset;
 	}
 	
+	
 	//STEP 2: Convert to a 1d float array
 	public static float[] convertPictureToFloat(char[][] picture){
 		float[] data = new float[12*12];
@@ -57,12 +58,93 @@ public class FileReader {
 		}
 		return data;
 	}
+	public static List<float[]> makeDataSet_all(List<char[][]> patterns){
+		List<float[]> DataSet= new ArrayList<>();
+		for (int i = 0 ; i< patterns.size(); i++){
+			char[][] picture = patterns.get(i);
+			DataSet.add(convertPictureToFloat(picture));
+		}
+		return DataSet;
+	}
+	public static List<char[][]> makeTrainingPatterns(){
+		List<char[][]> patterns = new ArrayList<>();
+		List<String> names = makeTrainingNamesList();
+		for ( int i = 0; i < names.size(); i++){
+			String name = names.get(i);
+			patterns.add(getPicture(name));
+		}	
+		return patterns;
+	}
 	
+	public static List<char[][]> makeTest10Patterns(){
+		List<char[][]> patterns = new ArrayList<>();
+		List<String> names = makeTest10NamesList();
+		for ( int i = 0; i < names.size(); i++){
+			String name = names.get(i);
+			patterns.add(getPicture(name));
+		}	
+		return patterns;
+	}
+	
+	public static List<char[][]> makeTest5Patterns(){
+		List<char[][]> patterns = new ArrayList<>();
+		List<String> names = makeTest5NamesList();
+		for ( int i = 0; i < names.size(); i++){
+			String name = names.get(i);
+			patterns.add(getPicture(name));
+		}	
+		return patterns;
+	}
 	
 	public static List<String> makeTrainingNamesList(){
 		List<String> names = new ArrayList<String>();
 		names.add("Pattern Files/Clock.txt");
+		names.add("Pattern Files/Cross.txt");
+		names.add("Pattern Files/Exclamation.txt");
+		names.add("Pattern Files/Face.txt");
+		names.add("Pattern Files/Giveway.txt");
+		names.add("Pattern Files/House.txt");
+		names.add("Pattern Files/Info.txt");
+		names.add("Pattern Files/Smile.txt");
+		names.add("Pattern Files/Stand.txt");
+		names.add("Pattern Files/Stop.txt");
+		names.add("Pattern Files/Tick.txt");
+		names.add("Pattern Files/Walk.txt");
 		return names;	
+	}
+	
+	public static List<String> makeTest5NamesList(){
+		List<String> names = new ArrayList<String>();
+		names.add("Test Files 5/Clock.noise.txt");
+		names.add("Test Files 5/Cross.noise.txt");
+		names.add("Test Files 5/Exclamation.noise.txt");
+		names.add("Test Files 5/Face.noise.txt");
+		names.add("Test Files 5/Giveway.noise.txt");
+		names.add("Test Files 5/House.noise.txt");
+		names.add("Test Files 5/Info.noise.txt");
+		names.add("Test Files 5/Smile.noise.txt");
+		names.add("Test Files 5/Stand.noise.txt");
+		names.add("Test Files 5/Stop.noise.txt");
+		names.add("Test Files 5/Tick.noise.txt");
+		names.add("Test Files 5/Walk.noise.txt");
+		return names;		
+	}
+	
+	public static List<String> makeTest10NamesList(){
+		List<String> names = new ArrayList<String>();
+		names.add("Test Files 10/Clock.noise.txt");
+		names.add("Test Files 10/Cross.noise.txt");
+		names.add("Test Files 10/Exclamation.noise.txt");
+		names.add("Test Files 10/Face.noise.txt");
+		names.add("Test Files 10/Giveway.noise.txt");
+		names.add("Test Files 10/House.noise.txt");
+		names.add("Test Files 10/Info.noise.txt");
+		names.add("Test Files 10/Smile.noise.txt");
+		names.add("Test Files 10/Stand.noise.txt");
+		names.add("Test Files 10/Stop.noise.txt");
+		names.add("Test Files 10/Tick.noise.txt");
+		names.add("Test Files 10/Walk.noise.txt");
+		return names;		
 	}
 
 	
