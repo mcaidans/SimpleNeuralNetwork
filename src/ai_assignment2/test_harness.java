@@ -14,17 +14,17 @@ public class test_harness {
 	// setup network	
 		int ils = 12*12; // input layer size
 		int hls = 5; // hidden layer size
-		int ols = 2; // output layer size
+		int ols = 12; // output layer size
 		Network neuralNet = new Network(ils,hls,ols);
 	// running network
 		neuralNet.runNetwork();
 	// setup test images for run	
-		float[] testingImage1 = test10DataSet.get(1);
+		float[] testingImage1 = test5DataSet.get(0);
 	// sending test image through		
 		neuralNet.setInput(testingImage1);
 		neuralNet.forwardPropagate();
 		System.out.println();
-		System.out.println("out put after forward propagating at 10 Noise:");
+		System.out.println("out put after forward propagating with Noise:");
 		float[] outputData = neuralNet.getOutputData();
 		for (int i = 0;i < outputData.length; i++){
 			System.out.print(outputData[i] + " ");

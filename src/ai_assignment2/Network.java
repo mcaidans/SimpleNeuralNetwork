@@ -48,12 +48,12 @@ public class Network {
 		List<float[]> trainingDataSet2 = new ArrayList<>();
 		trainingDataSet2.add(trainingImage1);
 		trainingDataSet2.add(trainingImage2);
-		while (runCount < 1601){
-			for ( int x = 0; x < trainingDataSet2.size(); x++){
-				setInput(trainingDataSet2.get(x));			
+		while (runCount < 1000000){
+			for ( int x = 0; x < trainingDataSet.size(); x++){
+				setInput(trainingDataSet.get(x));			
 				forwardPropagate();
 				if(runCount%100==0){
-					showOutputData();
+					//showOutputData();
 					}
 				//backPropagate(x);
 				for(int i = 0; i < outputLayer.size();i++){											//For all output neurons
