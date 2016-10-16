@@ -11,38 +11,16 @@ public class test_harness {
 		List<float[]> trainingDataSet = FileReader.makeDataSet_all(trainingPatterns);
 		List<float[]> test5DataSet = FileReader.makeDataSet_all(test5Patterns);
 		List<float[]> test10DataSet = FileReader.makeDataSet_all(test10Patterns);
-	// setup test images for run
-		float[] trainingImage1 = trainingDataSet.get(0);
-		float[] testingImage1 = test10DataSet.get(0);
 	// setup network	
 		int ils = 12*12; // input layer size
 		int hls = 5; // hidden layer size
 		int ols = 12; // output layer size
 		Network neuralNet = new Network(ils,hls,ols);
 	// running network
-		int runCount = 0;
-		neuralNet.setInput(trainingImage1);
-		while (runCount < 1){
-			
-			neuralNet.forwardPropagate();
-			System.out.println("Output after forward propagate:");
-			float[] outputData = neuralNet.getOutputData();
-			for (int i = 0;i < outputData.length; i++){
-				System.out.print(outputData[i] + " ");
-			}
-			System.out.println();
-			
-			neuralNet.backPropagate(0);
-			System.out.println();
-			System.out.println("Output after backpropagting method:");
-			float[] outputDat = neuralNet.getOutputData();
-			for (int i = 0;i < outputDat.length; i++){
-				System.out.print(outputDat[i] + " ");
-			}
-			System.out.println();
-			runCount++;
-		}
-			
+		neuralNet.runNetwork();
+	// setup test images for run	
+		float[] testingImage1 = test10DataSet.get(0);
+	// sending test image through		
 		neuralNet.setInput(testingImage1);
 		neuralNet.forwardPropagate();
 		System.out.println();

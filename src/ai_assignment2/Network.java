@@ -39,6 +39,35 @@ public class Network {
 		createConnections();
 	}
 	
+	public void runNetwork(){
+		int runCount = 0;
+		List<char[][]> trainingPatterns = FileReader.makeTrainingPatterns();
+		List<float[]> trainingDataSet = FileReader.makeDataSet_all(trainingPatterns);
+		float[] trainingImage1 = trainingDataSet.get(0);
+		setInput(trainingImage1);
+		while (runCount < 1){
+			
+			forwardPropagate();
+			System.out.println("Output after forward propagate:");
+			float[] outputData = getOutputData();
+			for (int i = 0;i < outputData.length; i++){
+				System.out.print(outputData[i] + " ");
+			}
+			System.out.println();
+			
+			backPropagate(0);
+			System.out.println();
+			System.out.println("Output after backpropagting method:");
+			float[] outputDat = getOutputData();
+			for (int i = 0;i < outputDat.length; i++){
+				System.out.print(outputDat[i] + " ");
+			}
+			System.out.println();
+			runCount++;
+		}
+		
+	}
+	
 	public void printNeurons(){
 		System.out.print("Input Layer: ");
 		for ( int i = 0; i < inputLayerSize; i++){
