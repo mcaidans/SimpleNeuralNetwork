@@ -14,12 +14,12 @@ public class test_harness {
 	// setup network	
 		int ils = 12*12; // input layer size
 		int hls = 5; // hidden layer size
-		int ols = 12; // output layer size
+		int ols = 2; // output layer size
 		Network neuralNet = new Network(ils,hls,ols);
 	// running network
 		neuralNet.runNetwork();
 	// setup test images for run	
-		float[] testingImage1 = test10DataSet.get(0);
+		float[] testingImage1 = test10DataSet.get(1);
 	// sending test image through		
 		neuralNet.setInput(testingImage1);
 		neuralNet.forwardPropagate();

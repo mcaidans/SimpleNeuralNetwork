@@ -44,28 +44,51 @@ public class Network {
 		List<char[][]> trainingPatterns = FileReader.makeTrainingPatterns();
 		List<float[]> trainingDataSet = FileReader.makeDataSet_all(trainingPatterns);
 		float[] trainingImage1 = trainingDataSet.get(0);
-		setInput(trainingImage1);
-		while (runCount < 1){
-			
-			forwardPropagate();
-			System.out.println("Output after forward propagate:");
-			float[] outputData = getOutputData();
-			for (int i = 0;i < outputData.length; i++){
-				System.out.print(outputData[i] + " ");
+		float[] trainingImage2 = trainingDataSet.get(1);
+		List<float[]> trainingDataSet2 = new ArrayList<>();
+		trainingDataSet2.add(trainingImage1);
+		trainingDataSet2.add(trainingImage2);
+		while (runCount < 1601){
+			for ( int x = 0; x < trainingDataSet2.size(); x++){
+				setInput(trainingDataSet2.get(x));			
+				forwardPropagate();
+				if(runCount%100==0){
+					showOutputData();
+					}
+				//backPropagate(x);
+				for(int i = 0; i < outputLayer.size();i++){											//For all output neurons
+					if (i == x){
+						outputLayer.get(i).setDelta(calculateOutputDelta(outputLayer.get(i), (float)1.0));								//Calculate Delta of Output Neuron using desired = 1
+					}
+					else{
+						outputLayer.get(i).setDelta(calculateOutputDelta(outputLayer.get(i), (float)0.0));									//Calculate Delta of Output Neuron using desired= 0
+						}
+					for(int j = 0; j < outputLayer.get(i).incomingConnections.size(); j++){			//For all connections to output neuron
+						calculateWeight(outputLayer.get(i).incomingConnections.get(j));					//Calculate new weight
+						
+					}
+				}
+				//System.out.println();
+				
+				for (int i = 0; i < hiddenLayer1.size(); i++){				//For all hidden neurons
+					hiddenLayer1.get(i).setDelta(calculateHiddenDelta(hiddenLayer1.get(i)));									//Calculate Delta of Hidden Neuron
+					for(int j = 0; j < hiddenLayer1.get(i).incomingConnections.size(); j++){				//For all connections to hidden neuron
+						calculateWeight(hiddenLayer1.get(i).incomingConnections.get(j));						//Calculate new weight
+					}
+				}
+				runCount++;
 			}
-			System.out.println();
-			
-			backPropagate(0);
-			System.out.println();
-			System.out.println("Output after backpropagting method:");
-			float[] outputDat = getOutputData();
-			for (int i = 0;i < outputDat.length; i++){
-				System.out.print(outputDat[i] + " ");
-			}
-			System.out.println();
-			runCount++;
 		}
 		
+	}
+	public void showOutputData(){
+		System.out.println();
+		//System.out.println("Output after forward propagate:");
+		float[] outputDat = getOutputData();
+		for (int i = 0;i < outputDat.length; i++){
+			System.out.print(outputDat[i] + " ");
+		}
+		System.out.println();	
 	}
 	
 	public void printNeurons(){
