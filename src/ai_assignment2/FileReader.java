@@ -58,6 +58,7 @@ public class FileReader {
 		}
 		return data;
 	}
+	// this method creates an entire dataset for a set of patterns
 	public static List<float[]> makeDataSet_all(List<char[][]> patterns){
 		List<float[]> DataSet= new ArrayList<>();
 		for (int i = 0 ; i< patterns.size(); i++){
@@ -66,6 +67,8 @@ public class FileReader {
 		}
 		return DataSet;
 	}
+	
+	// making the the patterns
 	public static List<char[][]> makeTrainingPatterns(){
 		List<char[][]> patterns = new ArrayList<>();
 		List<String> names = makeTrainingNamesList();
@@ -95,7 +98,7 @@ public class FileReader {
 		}	
 		return patterns;
 	}
-	
+	// loading filenames for the patterns
 	public static List<String> makeTrainingNamesList(){
 		List<String> names = new ArrayList<String>();
 		names.add("Pattern Files/Clock.txt");
@@ -148,7 +151,7 @@ public class FileReader {
 	}
 
 	
-	
+	// shows a 2d char [][] of * to show the picture to a user
 	public static void showPicture (char[][] picture){
 		//System.out.println("Showing picture");
 		  for (int i =0; i<12; i++){
@@ -159,6 +162,7 @@ public class FileReader {
 		   }
 		  System.out.println();
 		}
+	// for use in testing
 	public static void showData (float[] dataSet){
 		System.out.println();
 		  for (int i =0; i<5; i++){
@@ -166,18 +170,19 @@ public class FileReader {
 		   }
 		  System.out.println();
 		}
-	
+	// shows the entire dataset
 	public static void ShowDataSet(List<float[]> dataSet){
 		for (int i = 0; i < dataSet.size(); i++){
 			showData(dataSet.get(i));
 		}
 	}
+	// show all patterns to the user
 	public static void ShowPatterns(List<char[][]> patterns){
 		for (int i = 0; i < patterns.size(); i++){
 			showPicture(patterns.get(i));
 		}
 	}
-	
+	// used for testing
 	public static float getValue(float[][] dataset){
 		float value = 0;
 		for (int i =0; i<12; i++){
@@ -187,7 +192,4 @@ public class FileReader {
 		   }
 		return value;
 	}
-	
-	
-
 }
