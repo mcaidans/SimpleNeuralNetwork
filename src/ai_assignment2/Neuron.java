@@ -3,7 +3,7 @@ package ai_assignment2;
 import java.util.*;
 
 public class Neuron {
-	// class variables
+	//VARIABLES
 	protected float output;
 	protected float input;
 	public String name;
@@ -12,90 +12,86 @@ public class Neuron {
 	protected List<Connection> outgoingConnections = new ArrayList<>();
 	protected List<Connection> incomingConnections = new ArrayList<>();
 	
-	// Constructors
+	//Constructors
 	public Neuron(String name){
-		//this.connections = new ArrayList<>();
 		this.input = (float)0; 
 		this.output = (float)0;
 		this.name = name;
 	}
-	
 	public Neuron(float input){
 		this.input = input;
 		this.output = (float)0;
-		//connections = new ArrayList<>();
 	}
 	public Neuron(String name, Boolean bias){
-		//this.connections = new ArrayList<>();
 		this.input = (float)0; 
 		this.output = (float)1;
 		this.name = name;
 		this.bias = bias;
 	}
 
-	
-	// methods
+	//runFunction - Puts input through eulers algorithm and sets result to output
 	public float runFunction(float input){
 		float output = 1.0f / (1.0f + ((float)Math.exp(-input)));  //MAth.exp is eulers algorithm
 		return output;
 	}
-	/*
-	public float calculateOutput(){
-		float sum = 0;
-		for(int i = 0; i < connectionsTo.size(); i++){
-			sum += (connectionsTo.get(i).weight + connectionsTo.get(i).getFrom();
-		}
-		return runFunction(sum);
-	}
-*/
-	
-	public void addOutgoingConnection(Connection connection){
-		outgoingConnections.add(connection);
+	//NOT SURE////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	public void addToInput(float value) {
+		this.input = input + value;
 	}
 	
-	public void addIncomingConnection(Connection connection){
-		incomingConnections.add(connection);
-	}
 	
-	public void setDelta(float delta){
-		this.delta = delta;
-	}
+	//GETTERS//////
 	
+	//Gets neurons input
+	public float getInput() {	
+		return input;
+	}
+	//Gets neurons delta
 	public float getDelta(){
 		return delta;
 	}
-	
+	//Gets neurons output
 	public float getOutput() {
 		if(!bias){
 			return output;
 		}
 		else return 1;
 	}
-
+	//Gets list of incoming connections
+	public List<Connection> getIncomingConnections() {
+		return incomingConnections;
+	}
+	//Gets list of outgoing connections
+	public List<Connection> getOutgoingConnections() {
+		return outgoingConnections;
+	}
+	
+	//SETTERS/////////
+	
+	//Sets input 
+	public void setInput(float input) {
+		if (!bias){
+			this.input = input;
+			this.output = runFunction(input);		//Calls runFuction using input
+		}
+	}
+	//Sets Delta
+		public void setDelta(float delta){
+			this.delta = delta;
+		}
+	//Sets output
 	public void setOutput(float output) {
 		if(!bias){
 			this.output = output;
 		}
 	}
-
-	public float getInput() {
-		return input;
+	//Adds connection to list of outgoing connections
+	public void addOutgoingConnection(Connection connection){
+		outgoingConnections.add(connection);
 	}
-
-	public void setInput(float input) {
-		if (!bias){
-			this.input = input;
-			this.output = runFunction(input);
-		}
-	}
-	public void addToInput(float value) {
-		this.input = input + value;
-	}
-	public List<Connection> getIncomingConnections() {
-		return incomingConnections;
-	}
-	public List<Connection> getOutgoingConnections() {
-		return outgoingConnections;
+	//Adds connection to list of incoming connections
+	public void addIncomingConnection(Connection connection){
+		incomingConnections.add(connection);
 	}
 }
 
