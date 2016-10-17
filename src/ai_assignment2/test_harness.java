@@ -1,8 +1,11 @@
 package ai_assignment2;
 import java.util.*;
+import java.io.*;
 public class test_harness {
 
 	public static void main(String[] args) {
+		
+		Scanner keyboard = new Scanner(System.in);
 		
 		// setup data stores
 		List<char[][]> trainingPatterns = FileReader.makeTrainingPatterns();
@@ -13,21 +16,28 @@ public class test_harness {
 		List<float[]> test10DataSet = FileReader.makeDataSet_all(test10Patterns);
 	// setup network	
 		int ils = 12*12; // input layer size
-		int hls = 5; // hidden layer size
+		int hls = 7; // hidden layer size
 		int ols = 12; // output layer size
 		Network neuralNet = new Network(ils,hls,ols);
+		
 	// running network
 		neuralNet.runNetwork();
-	// setup test images for run	
-		float[] testingImage1 = test5DataSet.get(0);
-	// sending test image through		
-		neuralNet.setInput(testingImage1);
-		neuralNet.forwardPropagate();
-		System.out.println();
-		System.out.println("out put after forward propagating with Noise:");
-		float[] outputData = neuralNet.getOutputData();
-		for (int i = 0;i < outputData.length; i++){
-			System.out.print(outputData[i] + " ");
+	// setup test images for run
+		Boolean finish = false;
+		while (!finish){
+			System.out.println("enter image to test");
+			int testCode = keyboard.nextInt();
+			float[] testingImage1 = test10DataSet.get(testCode);
+		// sending test image through		
+			neuralNet.setInput(testingImage1);
+			neuralNet.forwardPropagate();
+			System.out.println();
+			System.out.println("Testing Noise 10 for: " + testCode);
+			System.out.println();
+			float[] outputData = neuralNet.getOutputData();
+			for (int i = 0;i < outputData.length; i++){
+				System.out.print(outputData[i] + " ");
+			}
 		}
 	
 		

@@ -12,8 +12,8 @@ public class Connection {
 	public Connection(Neuron a, Neuron b) {
 		this.setFrom(a);
 		this.setTo(b);
-		this.max = (float) 0.5;
-		this.min = (float) -0.5;
+		this.max = (float) 0.25;
+		this.min = (float) -0.25;
 		this.range = Math.abs(this.max-this.min);
 		this.setWeight((float) (Math.random()*this.range)+this.min);// this gives me a range -0.5 to +0.5
 	}

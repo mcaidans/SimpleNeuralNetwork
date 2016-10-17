@@ -8,7 +8,8 @@ public class Network {
 	protected List<Neuron> hiddenLayer1 = new ArrayList<>();
 	protected List<Neuron> outputLayer = new ArrayList<>();
 	public float learningRate = (float).1;
-	private boolean goalState = false;
+	//private boolean goalState = false;
+	public ErrorCalc error;
 	
 	private int inputLayerSize;
 	private int hiddenLayerSize;
@@ -20,6 +21,7 @@ public class Network {
 		this.hiddenLayerSize = hiddenLayerSize;
 		this.outputLayerSize = outputLayerSize;
 		
+		error = new ErrorCalc();
 		
 		//creating output layer
 		for ( int i = 0; i < outputLayerSize; i++){
@@ -31,31 +33,44 @@ public class Network {
 			Neuron neuron = new Neuron("hidden");
 			hiddenLayer1.add(neuron);
 		}
+		
 		// creating inputLayer
 		for ( int i = 0; i < inputLayerSize; i++){
 			Neuron neuron = new Neuron("input");
 			inputLayer.add(neuron);
 		}
+		Neuron neuron = new Neuron("inputBias", true);
+		inputLayer.add(neuron);
+		neuron = new Neuron("hiddenBias", true);
+		hiddenLayer1.add(neuron);
 		createConnections();
+		
+		
 	}
 	
 	public void runNetwork(){
 		int runCount = 0;
 		List<char[][]> trainingPatterns = FileReader.makeTrainingPatterns();
 		List<float[]> trainingDataSet = FileReader.makeDataSet_all(trainingPatterns);
-		float[] trainingImage1 = trainingDataSet.get(0);
-		float[] trainingImage2 = trainingDataSet.get(1);
-		List<float[]> trainingDataSet2 = new ArrayList<>();
-		trainingDataSet2.add(trainingImage1);
-		trainingDataSet2.add(trainingImage2);
-		while (runCount < 1000000){
+		//float[] trainingImage1 = trainingDataSet.get(0);
+		//float[] trainingImage2 = trainingDataSet.get(1);
+		//List<float[]> trainingDataSet2 = new ArrayList<>();
+		//trainingDataSet2.add(trainingImage1);
+		//trainingDataSet2.add(trainingImage2);
+		while (runCount < 1200000){
 			for ( int x = 0; x < trainingDataSet.size(); x++){
-				setInput(trainingDataSet.get(x));			
+				setInput(trainingDataSet.get(x));
+				setExpectedOutput(x,trainingDataSet.size());
 				forwardPropagate();
-				if(runCount%100==0){
+				setActualOutput();
+				error.calculateError();
+				backPropagate(x);
+				//forwardPropagate();
+				//if(runCount%1==0){
 					//showOutputData();
-					}
-				//backPropagate(x);
+					//}
+				
+				/*
 				for(int i = 0; i < outputLayer.size();i++){											//For all output neurons
 					if (i == x){
 						outputLayer.get(i).setDelta(calculateOutputDelta(outputLayer.get(i), (float)1.0));								//Calculate Delta of Output Neuron using desired = 1
@@ -75,14 +90,21 @@ public class Network {
 					for(int j = 0; j < hiddenLayer1.get(i).incomingConnections.size(); j++){				//For all connections to hidden neuron
 						calculateWeight(hiddenLayer1.get(i).incomingConnections.get(j));						//Calculate new weight
 					}
-				}
-				runCount++;
+				}*/
+				//runCount++;
 			}
+			runCount++;
+			System.out.println(error.calculateRMS());
+			if (error.calculateRMS() < 0.0075){
+				System.out.println("RMS Goal Reached");
+				break;
+			}
+			error.resetValues();
 		}
 		
 	}
 	public void showOutputData(){
-		System.out.println();
+		//System.out.println();
 		//System.out.println("Output after forward propagate:");
 		float[] outputDat = getOutputData();
 		for (int i = 0;i < outputDat.length; i++){
@@ -126,11 +148,34 @@ public class Network {
 		}
 	}
 	
+	
 	public void setInput(float[] input){
 		for(int i = 0; i < input.length; i++){
 			inputLayer.get(i).setOutput(input[i]);
 		}
 	}
+	
+	public void setExpectedOutput(int position, int length){
+		float[] expectedOutput = new float[length];
+		for(int i = 0; i < length; i++){
+			if (i == position){
+				expectedOutput[i] = 1;
+			}
+			else {
+				expectedOutput[i] = 0;
+			}
+		}
+		error.setExpected(expectedOutput);
+	}
+	public void setActualOutput(){
+		float[] outputData = new float[outputLayer.size()];
+		for (int i = 0 ; i < outputLayer.size(); i++){
+			outputData[i]=outputLayer.get(i).getOutput();
+		}
+		error.setActual(outputData);
+	}
+	
+	
 /*
 	public void enterData(float[] dataset){
 		for (int i = 0 ; i < dataset.length; i++){
@@ -144,6 +189,7 @@ public class Network {
 		}
 		return outputData;
 	}
+	
 	
 	public void printInput(){
 		for(int i = 0; i < inputLayer.size(); i++){
@@ -193,7 +239,7 @@ public class Network {
 		float delta = nout*(1-nout)*(desiredOutput-nout);
 		//System.out.print("Desired Output: " + desiredOutput);
 		//System.out.print(" Actual: " + nout);
-		//System.out.println(" Delta: " + delta);
+		//System.out.println(" Delta: " + delta);		
 		return delta;
 	}
 	
@@ -210,20 +256,17 @@ public class Network {
 		float neuronOutput = connection.getFrom().getOutput();				//Get output of Neuron
 		float delta = connection.getTo().getDelta();
 		float weight = oldWeight + learningRate * neuronOutput * delta;		//Get New Weight
-	
 		connection.setWeight(weight);
 		return weight;										//Assign New Weight
 	}
 	
 	public void backPropagate(int position){
-		int count = 0;
-		while(!goalState){
 			for(int i = 0; i < outputLayer.size();i++){											//For all output neurons
 				if (i == position){
 					outputLayer.get(i).setDelta(calculateOutputDelta(outputLayer.get(i), (float)1.0));								//Calculate Delta of Output Neuron using desired = 1
 				}
 				else{
-					outputLayer.get(i).setDelta(calculateOutputDelta(outputLayer.get(i), (float)0.0));									//Calculate Delta of Output Neuron using desired= 0
+					outputLayer.get(i).setDelta(calculateOutputDelta(outputLayer.get(i), (float)0.01));									//Calculate Delta of Output Neuron using desired= 0
 					}
 				for(int j = 0; j < outputLayer.get(i).incomingConnections.size(); j++){			//For all connections to output neuron
 					calculateWeight(outputLayer.get(i).incomingConnections.get(j));					//Calculate new weight
@@ -237,15 +280,7 @@ public class Network {
 				for(int j = 0; j < hiddenLayer1.get(i).incomingConnections.size(); j++){				//For all connections to hidden neuron
 					calculateWeight(hiddenLayer1.get(i).incomingConnections.get(j));						//Calculate new weight
 				}
-			}
-			forwardPropagate();
-			count++;
-			if(count == 1600){
-				goalState = true;
-			}
-		}
-		
-	
+			}	
 	}
 }
 

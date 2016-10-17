@@ -8,6 +8,7 @@ public class Neuron {
 	protected float input;
 	public String name;
 	private float delta;
+	protected Boolean bias = false;
 	protected List<Connection> outgoingConnections = new ArrayList<>();
 	protected List<Connection> incomingConnections = new ArrayList<>();
 	
@@ -24,6 +25,14 @@ public class Neuron {
 		this.output = (float)0;
 		//connections = new ArrayList<>();
 	}
+	public Neuron(String name, Boolean bias){
+		//this.connections = new ArrayList<>();
+		this.input = (float)0; 
+		this.output = (float)1;
+		this.name = name;
+		this.bias = bias;
+	}
+
 	
 	// methods
 	public float runFunction(float input){
@@ -57,11 +66,16 @@ public class Neuron {
 	}
 	
 	public float getOutput() {
-		return output;
+		if(!bias){
+			return output;
+		}
+		else return 1;
 	}
 
 	public void setOutput(float output) {
-		this.output = output;
+		if(!bias){
+			this.output = output;
+		}
 	}
 
 	public float getInput() {
@@ -69,8 +83,10 @@ public class Neuron {
 	}
 
 	public void setInput(float input) {
-		this.input = input;
-		this.output = runFunction(input);
+		if (!bias){
+			this.input = input;
+			this.output = runFunction(input);
+		}
 	}
 	public void addToInput(float value) {
 		this.input = input + value;
