@@ -14,18 +14,33 @@ public class assignment2 {
 		List<float[]> trainingDataSet = FileReader.makeDataSet_all(trainingPatterns);
 		List<float[]> test5DataSet = FileReader.makeDataSet_all(test5Patterns);
 		List<float[]> test10DataSet = FileReader.makeDataSet_all(test10Patterns);
-
-		//load the network
+		
+		//Set layer values
 		int ils = 12*12; // input layer size
 		int hls = 7; // hidden layer size
 		int ols = 12; // output layer size
 		Network neuralNet = new Network(ils,hls,ols);
-
-		// train the network
-		neuralNet.runNetwork();
-
-		System.out.print("Would You like to run a custom file from the custom folder? Y/N: ");
+		System.out.print("Start Training? Enter 'Y' to begin ");
 		char yesno = kb.next().toUpperCase().charAt(0);
+		if (yesno=='N'){
+			System.out.print("Enter desired RMS success threshold (Betweeny 0.0075 and 0.0001): ");
+			float RMS = kb.nextFloat();
+			neuralNet.setRMS(RMS);
+			System.out.print("Enter desired learning rate (Between 0.99 and 0.01): ");
+			float learningRate = kb.nextFloat();
+			neuralNet.setLearningRate(learningRate);
+			System.out.print("Enter maximum number of iterations: ");
+			int noIter = kb.nextInt();
+			neuralNet.setMaxIterations(noIter);
+		}
+		
+		// train the network
+		System.out.println("Training Network...");
+		neuralNet.runNetwork();
+		System.out.println("Training Complete!");
+		System.out.println();
+		System.out.print("Would You like to run a custom file from the custom folder? Y/N: ");
+		yesno = kb.next().toUpperCase().charAt(0);
 		if (yesno=='Y'){
 			System.out.print("Please Enter Custom filename including extension from the custom folder: ");
 			String name = kb.next();

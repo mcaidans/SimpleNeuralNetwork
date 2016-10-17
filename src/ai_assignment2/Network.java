@@ -8,8 +8,8 @@ public class Network {
 	protected List<Neuron> hiddenLayer1 = new ArrayList<>();
 	protected List<Neuron> outputLayer = new ArrayList<>();
 	public float learningRate = (float).1;
-	private float RMSvalue;
-	private int IterationNumber;
+	private float RMSvalue = (float) 0.00125;
+	private int iterationNumber = 120000;
 	public ErrorCalc error;
 	private int inputLayerSize;
 	private int hiddenLayerSize;
@@ -20,7 +20,6 @@ public class Network {
 		this.inputLayerSize = inputLayerSize;
 		this.hiddenLayerSize = hiddenLayerSize;
 		this.outputLayerSize = outputLayerSize;
-		
 		error = new ErrorCalc();	//Initialize error
 		
 		//creating output layer
@@ -52,11 +51,12 @@ public class Network {
 		
 	}
 	
+	//Controller method
 	public void runNetwork(){
 		int runCount = 0;
 		List<char[][]> trainingPatterns = FileReader.makeTrainingPatterns();
 		List<float[]> trainingDataSet = FileReader.makeDataSet_all(trainingPatterns);
-		while (runCount < 12000){
+		while (runCount < iterationNumber){
 			for ( int x = 0; x < trainingDataSet.size(); x++){
 				setInput(trainingDataSet.get(x));
 				setExpectedOutput(x,trainingDataSet.size());
@@ -67,12 +67,20 @@ public class Network {
 			}
 			runCount++;
 			//System.out.println(error.calculateRMS());
-			if (error.calculateRMS() < 0.00125){
+			if (error.calculateRMS() < RMSvalue){
 				System.out.println("RMS Goal Reached");
+				System.out.println("Ending RMS for training is: " + error.calculateRMS());
 				break;
+			}
+			if (!(runCount < iterationNumber)){
+				System.out.println("Max iterations reached");
+				System.out.println("Ending RMS for training is: " + error.calculateRMS());
 			}
 			error.resetValues();
 		}
+		
+		System.out.println("Number of Iterations used " + runCount/12);
+		
 		
 	}
 
@@ -228,6 +236,15 @@ public class Network {
 			outputData[i]=outputLayer.get(i).getOutput();
 		}
 		error.setActual(outputData);
+	}
+	public void setLearningRate(float rate){
+		this.learningRate = rate;
+	}
+	public void setRMS(float RMS){
+		this.RMSvalue = RMS;
+	}
+	public void setMaxIterations(int max){
+		this.iterationNumber = max;
 	}
 }
 
