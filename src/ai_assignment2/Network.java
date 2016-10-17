@@ -8,7 +8,7 @@ public class Network {
 	protected List<Neuron> hiddenLayer1 = new ArrayList<>();
 	protected List<Neuron> outputLayer = new ArrayList<>();
 	public float learningRate = (float).1;
-	private float RMSvalue = (float) 0.00125;
+	private float RMSvalue = (float) 0.007;
 	private int iterationNumber = 120000;
 	public ErrorCalc error;
 	private int inputLayerSize;
@@ -67,6 +67,10 @@ public class Network {
 			}
 			runCount++;
 			//System.out.println(error.calculateRMS());
+			
+			/*if(runCount %12 == 0){
+				System.out.println(error.calculateRMS());
+			}*/
 			if (error.calculateRMS() < RMSvalue){
 				System.out.println("RMS Goal Reached");
 				System.out.println("Ending RMS for training is: " + error.calculateRMS());
@@ -244,7 +248,7 @@ public class Network {
 		this.RMSvalue = RMS;
 	}
 	public void setMaxIterations(int max){
-		this.iterationNumber = max;
+		this.iterationNumber = max*12;
 	}
 }
 
